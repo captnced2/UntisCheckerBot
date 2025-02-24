@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Time {
 
-    private static HashMap<Integer, Integer> lessons;
+    private static final HashMap<Integer, Integer> lessons;
 
     static {
         lessons = new HashMap<>();

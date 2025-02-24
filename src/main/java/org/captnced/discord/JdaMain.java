@@ -12,7 +12,6 @@ import java.util.*;
 public class JdaMain {
 
     private final JDA jda;
-    private final Untis untis;
 
     public JdaMain(Config conf, Untis unt) {
         String token = conf.getValueFromKey("token");
@@ -28,7 +27,6 @@ public class JdaMain {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        untis = unt;
         registerCommands();
     }
 
