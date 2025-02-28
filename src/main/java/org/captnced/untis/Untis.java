@@ -25,6 +25,17 @@ public class Untis extends WebUntis {
         allTeachers = new ArrayList<>();
     }
 
+    public static UntisTeacher getTeacher(Period p) {
+        JSONArray arr = p.getJSON().getJSONArray("te");
+        String name;
+        String longName;
+        if (arr == null || arr.isEmpty()) return null;
+        name = ((JSONObject) arr.get(0)).get("name").toString();
+        longName = ((JSONObject) arr.get(0)).get("longname").toString();
+        if (name.isBlank() || longName.isBlank()) return null;
+        return new UntisTeacher(name, longName);
+    }
+
     public void requestRooms(int date) {
         try {
             this.login();
@@ -41,7 +52,7 @@ public class Untis extends WebUntis {
                                     if (p.getStartTime() == per.start()) newLesson = false;
                                 }
                                 if (newLesson)
-                                    r.periods().add(new UntisPeriod(getTeacher(p), p.getKlassen().getFirst().getName(), p.getStartTime(), p.getEndTime(), p.getDate(), p.getRooms().getFirst().getName(), p.isCancled()));
+                                    r.periods().add(new UntisPeriod(p));
                             }
                             exists = true;
                             break;
@@ -51,7 +62,7 @@ public class Untis extends WebUntis {
                         if (!p.getRooms().isEmpty()) {
                             UntisRoom nr = new UntisRoom(p.getRooms().getFirst().getName(), new ArrayList<>());
                             if (getTeacher(p) != null)
-                                nr.periods().add(new UntisPeriod(getTeacher(p), p.getKlassen().getFirst().getName(), p.getStartTime(), p.getEndTime(), p.getDate(), p.getRooms().getFirst().getName(), p.isCancled()));
+                                nr.periods().add(new UntisPeriod(p));
                             untisRooms.add(nr);
                         }
                     }
@@ -63,17 +74,6 @@ public class Untis extends WebUntis {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private UntisTeacher getTeacher(Period p) {
-        JSONArray arr = p.getJSON().getJSONArray("te");
-        String name;
-        String longName;
-        if (arr == null || arr.isEmpty()) return null;
-        name = ((JSONObject) arr.get(0)).get("name").toString();
-        longName = ((JSONObject) arr.get(0)).get("longname").toString();
-        if (name.isBlank() || longName.isBlank()) return null;
-        return new UntisTeacher(name, longName);
     }
 
     public List<UntisRoom> filterValidRooms(List<UntisRoom> untisRooms) {
