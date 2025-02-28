@@ -22,4 +22,8 @@ public class Replies {
     public static MessageEmbed error() {
         return makeEmbed("Error", Color.RED);
     }
+
+    public static MessageEmbed error(String message) {
+        return makeEmbed("Error", message, Color.RED);
+    }
 }
