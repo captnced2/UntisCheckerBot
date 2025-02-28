@@ -15,6 +15,7 @@ public class CommandAutoCompleteListener extends ListenerAdapter {
     public CommandAutoCompleteListener(Untis unt) {
         untis = unt;
         untis.requestAllTeachers();
+        untis.requestAllRooms();
     }
 
     @Override
@@ -29,6 +30,13 @@ public class CommandAutoCompleteListener extends ListenerAdapter {
                     .filter(teacher -> teacher.full().toLowerCase().startsWith(event.getFocusedOption().getValue().toLowerCase()))
                     .limit(25)
                     .map(teacher -> new Command.Choice(teacher.full(), teacher.name()))
+                    .toList();
+            event.replyChoices(choices).queue();
+        } else if (event.getFocusedOption().getName().equals("raum")) {
+            List<Command.Choice> choices = untis.getAllRooms().stream()
+                    .filter(room -> room.name().toLowerCase().startsWith(event.getFocusedOption().getValue().toLowerCase()))
+                    .limit(25)
+                    .map(room -> new Command.Choice(room.name(), room.name()))
                     .toList();
             event.replyChoices(choices).queue();
         }

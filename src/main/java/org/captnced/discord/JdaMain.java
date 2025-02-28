@@ -41,6 +41,9 @@ public class JdaMain {
         commands.add(Commands.slash("teachertimetable", "Gibt alle Stunden eines Lehrers für einen Tag aus")
                 .addOptions(dateOption,
                         new OptionData(OptionType.STRING, "lehrer", "Lehrer", true, true)));
+        commands.add(Commands.slash("roomtimetable", "Gibt alle Stunden eines Raums für einen Tag aus")
+                .addOptions(dateOption,
+                        new OptionData(OptionType.STRING, "raum", "Raum", true, true)));
         jda.updateCommands().addCommands(commands).queue();
     }
 

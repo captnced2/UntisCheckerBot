@@ -16,6 +16,7 @@ public class Untis extends WebUntis {
     private final File roomsFile;
     private final String[] roomsBlacklist = new String[]{"A1U15", "AB1", "AB2", "A013"};
     private List<UntisTeacher> allTeachers;
+    private List<UntisRoom> allRooms;
 
     public Untis() {
         super("Gym_MT", "nessa.webuntis.com");
@@ -100,6 +101,26 @@ public class Untis extends WebUntis {
         return freeRooms;
     }
 
+    public void requestAllRooms() {
+        List<UntisRoom> untisRooms = new ArrayList<>();
+        try {
+            this.login();
+            Rooms rooms = this.getRooms();
+            for (Room r : rooms.getRooms()) {
+                untisRooms.add(new UntisRoom(r.getName(), new ArrayList<>()));
+            }
+            untisRooms.sort(Comparator.comparing(UntisRoom::name));
+            allRooms = filterValidRooms(untisRooms);
+            this.logout();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<UntisRoom> getAllRooms() {
+        return allRooms;
+    }
+
     public void requestAllTeachers() {
         requestRooms(-1);
         List<UntisRoom> all = readRooms();
@@ -144,6 +165,17 @@ public class Untis extends WebUntis {
         }
         teacherTimetable.sort(Comparator.comparing(UntisPeriod::start));
         return teacherTimetable;
+    }
+
+    public List<UntisPeriod> getRoomTimetable(String roomName) {
+        List<UntisRoom> all = readRooms();
+        List<UntisPeriod> roomTimetable = new ArrayList<>();
+        for (UntisRoom r : all) {
+            if (r.name().equals(roomName)) {
+                roomTimetable = r.periods();
+            }
+        }
+        return roomTimetable;
     }
 
     public List<UntisRoom> readRooms() {

@@ -26,12 +26,13 @@ public class SlashCommandListener extends ListenerAdapter {
             switch (event.getName()) {
                 case "freerooms" -> freerooms(event);
                 case "teachertimetable" -> teachertimetable(event);
+                case "roomtimetable" -> roomtimetable(event);
             }
         } catch (Exception e) {
             if (!event.isAcknowledged()) {
-                event.replyEmbeds(Replies.error(e.getMessage())).queue();
+                event.replyEmbeds(Replies.error(e.getMessage())).setEphemeral(true).queue();
             } else {
-                event.getHook().sendMessageEmbeds(Replies.error(e.getMessage())).queue();
+                event.getHook().sendMessageEmbeds(Replies.error(e.getMessage())).setEphemeral(true).queue();
             }
         }
     }
@@ -73,6 +74,28 @@ public class SlashCommandListener extends ListenerAdapter {
             event.getHook().sendMessageEmbeds(Replies.makeEmbed(title, "*Keine Stunden*", Color.yellow)).queue();
             return;
         }
+        event.getHook().sendMessageEmbeds(Replies.makeEmbed(title, buildPeriodsText(periods), Color.green)).queue();
+    }
+
+    private void roomtimetable(SlashCommandInteractionEvent event) {
+        OptionMapping date = event.getOption("datum");
+        OptionMapping room = event.getOption("raum");
+        if (date == null || room == null) {
+            event.replyEmbeds(Replies.error()).setEphemeral(true).queue();
+            return;
+        }
+        event.deferReply().queue();
+        untis.requestRooms(date.getAsInt());
+        List<UntisPeriod> periods = untis.getRoomTimetable(room.getAsString());
+        String title = "Stunden " + room.getAsString() + " - " + Time.formatDate(Time.dateFromUntis(date.getAsInt()));
+        if (periods.isEmpty()) {
+            event.getHook().sendMessageEmbeds(Replies.makeEmbed(title, "*Keine Stunden*", Color.yellow)).setEphemeral(true).queue();
+            return;
+        }
+        event.getHook().sendMessageEmbeds(Replies.makeEmbed(title, buildPeriodsText(periods), Color.green)).queue();
+    }
+
+    private String buildPeriodsText(List<UntisPeriod> periods) {
         periods.sort(Comparator.comparing(UntisPeriod::start));
         StringBuilder lessons = new StringBuilder();
         for (UntisPeriod period : periods) {
@@ -80,6 +103,6 @@ public class SlashCommandListener extends ListenerAdapter {
             if (period.canceled()) lessons.append(" (entfällt)");
             lessons.append("\n");
         }
-        event.getHook().sendMessageEmbeds(Replies.makeEmbed(title, lessons.toString(), Color.green)).queue();
+        return lessons.toString();
     }
 }
