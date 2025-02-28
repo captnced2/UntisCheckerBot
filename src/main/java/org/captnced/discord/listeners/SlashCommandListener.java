@@ -99,7 +99,12 @@ public class SlashCommandListener extends ListenerAdapter {
         periods.sort(Comparator.comparing(UntisPeriod::start));
         StringBuilder lessons = new StringBuilder();
         for (UntisPeriod period : periods) {
-            lessons.append(Time.getLessonFromUntisStart(period.start())).append("\\. Stunde: ").append(period.room()).append(" - ").append(period.subject()).append(" - ").append(period.klass());
+            lessons.append(Time.getLessonFromUntisStart(period.start())).append("\\. Stunde: ").append(period.room()).append(" - ");
+            if (period.subject().equals("Auf")) {
+                lessons.append("Aufenthaltsraum");
+            } else {
+                lessons.append(period.subject()).append(" - ").append(period.klass());
+            }
             if (period.canceled()) lessons.append(" (entfällt)");
             lessons.append("\n");
         }
