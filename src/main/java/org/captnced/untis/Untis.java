@@ -38,6 +38,7 @@ public class Untis extends WebUntis {
 
     public void requestRooms(int date) {
         try {
+            this.logout();
             this.login();
             List<UntisRoom> untisRooms = new ArrayList<>();
             List<Klasse> klas = this.getKlassen().getKlassen();
@@ -51,8 +52,9 @@ public class Untis extends WebUntis {
                                 for (UntisPeriod per : r.periods()) {
                                     if (p.getStartTime() == per.start()) newLesson = false;
                                 }
-                                if (newLesson)
+                                if (newLesson) {
                                     r.periods().add(new UntisPeriod(p));
+                                }
                             }
                             exists = true;
                             break;
@@ -78,7 +80,7 @@ public class Untis extends WebUntis {
 
     public List<UntisRoom> filterValidRooms(List<UntisRoom> untisRooms) {
         return untisRooms.stream()
-                .filter(untisRoom -> untisRoom.name().startsWith("A") || untisRoom.name().startsWith("B") || untisRoom.name().startsWith("C"))
+                .filter(untisRoom -> untisRoom.name().startsWith("A") || untisRoom.name().startsWith("B") || untisRoom.name().startsWith("C") || untisRoom.name().equals("MT1") || untisRoom.name().equals("MT2") || untisRoom.name().equals("MT3"))
                 .filter(untisRoom -> Arrays.stream(roomsBlacklist).noneMatch(untisRoom.name()::equals))
                 .collect(Collectors.toList());
     }
@@ -104,6 +106,7 @@ public class Untis extends WebUntis {
     public void requestAllRooms() {
         List<UntisRoom> untisRooms = new ArrayList<>();
         try {
+            this.logout();
             this.login();
             Rooms rooms = this.getRooms();
             for (Room r : rooms.getRooms()) {
