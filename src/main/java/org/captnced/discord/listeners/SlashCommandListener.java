@@ -69,7 +69,7 @@ public class SlashCommandListener extends ListenerAdapter {
         event.deferReply().queue();
         untis.requestRooms(date.getAsInt());
         List<UntisPeriod> periods = untis.getTeacherTimetable(untis.findTeacher(teacher.getAsString()), date.getAsInt());
-        String title = "Stunden " + untis.findTeacher(teacher.getAsString()).full() + " - " + Time.formatDate(Time.dateFromUntis(date.getAsInt()));
+        String title = "Stunden " + untis.findTeacher(teacher.getAsString()).full + " - " + Time.formatDate(Time.dateFromUntis(date.getAsInt()));
         if (periods.isEmpty()) {
             event.getHook().sendMessageEmbeds(Replies.makeEmbed(title, "*Keine Stunden*", Color.yellow)).queue();
             return;

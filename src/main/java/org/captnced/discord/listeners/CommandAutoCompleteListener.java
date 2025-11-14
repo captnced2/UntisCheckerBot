@@ -27,9 +27,9 @@ public class CommandAutoCompleteListener extends ListenerAdapter {
             event.replyChoices(choices).queue();
         } else if (event.getFocusedOption().getName().equals("lehrer")) {
             List<Command.Choice> choices = untis.getAllTeachers().stream()
-                    .filter(teacher -> teacher.full().toLowerCase().startsWith(event.getFocusedOption().getValue().toLowerCase()))
+                    .filter(teacher -> teacher.full.toLowerCase().startsWith(event.getFocusedOption().getValue().toLowerCase()))
                     .limit(25)
-                    .map(teacher -> new Command.Choice(teacher.full(), teacher.name()))
+                    .map(teacher -> new Command.Choice(teacher.full, teacher.name))
                     .toList();
             event.replyChoices(choices).queue();
         } else if (event.getFocusedOption().getName().equals("raum")) {

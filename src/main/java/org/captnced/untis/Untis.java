@@ -50,7 +50,10 @@ public class Untis extends WebUntis {
                             if (getTeacher(p) != null) {
                                 boolean newLesson = true;
                                 for (UntisPeriod per : r.periods()) {
-                                    if (p.getStartTime() == per.start()) newLesson = false;
+                                    if (p.getStartTime() == per.start()) {
+                                        newLesson = false;
+                                        break;
+                                    }
                                 }
                                 if (newLesson) {
                                     r.periods().add(new UntisPeriod(p));
@@ -131,7 +134,7 @@ public class Untis extends WebUntis {
         all.forEach(room -> room.periods().forEach(period -> {
             boolean exists = false;
             for (UntisTeacher teacher : teachers) {
-                if (teacher.name().equals(period.teacher().name())) {
+                if (teacher.name.equals(period.teacher().name)) {
                     exists = true;
                     break;
                 }
@@ -140,12 +143,22 @@ public class Untis extends WebUntis {
                 teachers.add(period.teacher());
             }
         }));
+        for (int i = 0; i < teachers.size(); i++) {
+            for (int j = i + 1; j < teachers.size(); j++) {
+                UntisTeacher teacher1 = teachers.get(i);
+                UntisTeacher teacher2 = teachers.get(j);
+                if (teacher1.full.equals(teacher2.full)) {
+                    teacher1.full += " (1)";
+                    teacher2.full += " (2)";
+                }
+            }
+        }
         allTeachers = teachers;
     }
 
     public UntisTeacher findTeacher(String name) {
         for (UntisTeacher t : allTeachers) {
-            if (t.name().equals(name)) {
+            if (t.name.equals(name)) {
                 return t;
             }
         }
@@ -161,7 +174,7 @@ public class Untis extends WebUntis {
         List<UntisPeriod> teacherTimetable = new ArrayList<>();
         for (UntisRoom r : all) {
             for (UntisPeriod p : r.periods()) {
-                if (p.date() == date && p.teacher().name().equals(teacher.name())) {
+                if (p.date() == date && p.teacher().name.equals(teacher.name)) {
                     teacherTimetable.add(p);
                 }
             }

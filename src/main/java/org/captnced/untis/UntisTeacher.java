@@ -1,4 +1,10 @@
 package org.captnced.untis;
 
-public record UntisTeacher(String name, String full) {
+public class UntisTeacher {
+    public String name;
+    public String full;
+    public UntisTeacher(String name, String full) {
+        this.name = name;
+        this.full = full;
+    }
 }
